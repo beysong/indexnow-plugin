@@ -1,0 +1,40 @@
+<div style="margin-bottom: 16px;">
+    <button
+        type="button"
+        class="btn btn-primary"
+        onclick="$.beysongIndexNow.generateVerificationFile()">
+        Generate Verification File
+    </button>
+    <p style="margin-top: 8px; color: #666; font-size: 13px;">
+        Downloads a .txt file with your API key as filename and content.
+        Host it at your domain root as: <code>https://yourdomain.com/[apikey].txt</code>
+    </p>
+</div>
+
+<script>
+    $.beysongIndexNow = {
+        generateVerificationFile: function() {
+            var form = $('#settings-form');
+            var apikey = form.find('[name="BeySong\\IndexNow\\Models\\Settings[apikey]"]').val();
+
+            if (!apikey || apikey.trim() === '') {
+                $.flash({ danger: 'Please enter an API key first.' });
+                return;
+            }
+
+            apikey = apikey.trim();
+            var content = apikey;
+            var blob = new Blob([content], { type: 'text/plain' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = apikey + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            $.flash({ success: 'Verification file downloaded. Host it at your domain root!' });
+        }
+    };
+</script>

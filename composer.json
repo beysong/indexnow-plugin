@@ -1,0 +1,9 @@
+{
+    "name": "beysong/indexnow-plugin",
+    "type": "october-plugin",
+    "description": "Submit your sitemap to IndexNow (Bing) for fast indexing.",
+    "require": {
+        "composer/installers": "~1.0",
+        "october/system": ">=2.0"
+    }
+}

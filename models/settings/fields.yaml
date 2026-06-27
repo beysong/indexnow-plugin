@@ -1,0 +1,35 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    _introduction:
+        label: ''
+        type: partial
+        path: $/beysong/indexnow/models/settings/_field_introduction.htm
+    apikey:
+        label: API Key
+        comment: Your IndexNow API key. Get one at https://www.bing.com/indexnow/getstarted
+        type: text
+        span: left
+    _generate_file:
+        label: ''
+        type: partial
+        path: $/beysong/indexnow/models/settings/_field_generate_file.htm
+    auto_submit:
+        label: Auto submit sitemap to IndexNow
+        comment: Automatically notify IndexNow when sitemap is updated.
+        type: checkbox
+    submit_url:
+        label: Sitemap URL
+        comment: Leave empty to use default /sitemap.xml
+        type: text
+        span: auto
+        trigger:
+            field: auto_submit
+            action: show
+            condition: checked
+    _submit_now:
+        label: ''
+        type: partial
+        path: $/beysong/indexnow/models/settings/_field_submit_now.htm

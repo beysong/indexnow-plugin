@@ -1,2 +1,7 @@
 1.0.1: First version of IndexNow
-1.0.2: Change Plugin Code
+1.0.2:
+    - Change plugin code (namespace, structure)
+1.0.3:
+    - Add auto-submit with configurable frequency (hourly/daily/weekly/monthly)
+    - Fix API key route pattern to support mixed-case keys
+    - Fix IndexNow API payload (host vs keyLocation)

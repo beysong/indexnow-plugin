@@ -2,12 +2,36 @@
     <button
         type="button"
         class="btn btn-default"
-        data-request="beysong$indexnow$settings::onSubmitNow"
-        data-request-confirm="Submit sitemap.xml to IndexNow now?"
-        data-loading-html="Submitting...">
+        id="beysong-submit-btn">
         Submit Sitemap to IndexNow Now
     </button>
     <p style="margin-top: 8px; color: #666; font-size: 13px;">
-        Manually trigger IndexNow submission. Make sure your verification file is hosted first.
+        Submit your sitemap.xml to Bing IndexNow. Make sure the verification file is hosted first.
     </p>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#beysong-submit-btn').on('click', function() {
+            var btn = $(this);
+            btn.prop('disabled', true).text('Submitting...');
+
+            fetch('/beysong_indexnow/submit', {
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    $.oc.flashMsg({ message: data.message, type: 'success' });
+                } else {
+                    $.oc.flashMsg({ message: data.error, type: 'error' });
+                }
+                btn.prop('disabled', false).text('Submit Sitemap to IndexNow Now');
+            })
+            .catch(function(data) {
+                // If JSON parse fails, check response
+                btn.prop('disabled', false).text('Submit Sitemap to IndexNow Now');
+            });
+        });
+    });
+</script>

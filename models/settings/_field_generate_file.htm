@@ -2,39 +2,58 @@
     <button
         type="button"
         class="btn btn-primary"
-        onclick="$.beysongIndexNow.generateVerificationFile()">
-        Generate Verification File
+        id="beysong-genfile-btn">
+        Generate &amp; Save API Key
     </button>
     <p style="margin-top: 8px; color: #666; font-size: 13px;">
-        Downloads a .txt file with your API key as filename and content.
-        Host it at your domain root as: <code>https://yourdomain.com/[apikey].txt</code>
+        Generates a random API key (if not set) and saves it. The plugin automatically serves the verification file at <code>/[key].txt</code>.
+    </p>
+    <p id="beysong-key-display" style="margin-top: 8px; display: none;">
+        Your API Key: <strong id="beysong-key-value" style="color: #015FAA;"></strong>
+    </p>
+    <p id="beysong-verify-url-display" style="margin-top: 4px; color: #666; font-size: 13px;">
+        Verification URL: <code id="beysong-verify-url"></code>
     </p>
 </div>
 
 <script>
-    $.beysongIndexNow = {
-        generateVerificationFile: function() {
-            var form = $('#settings-form');
-            var apikey = form.find('[name="Beysong\\IndexNow\\Models\\Settings[apikey]"]').val();
-
-            if (!apikey || apikey.trim() === '') {
-                $.flash({ danger: 'Please enter an API key first.' });
-                return;
+    $(document).ready(function() {
+        function updateKeyDisplay(key) {
+            if (key) {
+                $('#beysong-key-display').show();
+                $('#beysong-verify-url-display').show();
+                $('#beysong-key-value').text(key);
+                var baseUrl = window.location.protocol + '//' + window.location.host;
+                $('#beysong-verify-url').text(baseUrl + '/' + key + '.txt');
+                // Update form field too
+                $('input[name="Settings[apikey]"]').val(key).trigger('change');
             }
-
-            apikey = apikey.trim();
-            var content = apikey;
-            var blob = new Blob([content], { type: 'text/plain' });
-            var url = URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = apikey + '.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
-            $.flash({ success: 'Verification file downloaded. Host it at your domain root!' });
         }
-    };
+
+        // Load existing key on page load
+        var existingKey = $('input[name="Settings[apikey]"]').val()
+                       || $('input[name$="[apikey]"]').first().val()
+                       || '';
+        if (existingKey) updateKeyDisplay(existingKey);
+
+        $('#beysong-genfile-btn').on('click', function() {
+            var btn = $(this);
+            btn.prop('disabled', true).text('Generating...');
+
+            fetch('/beysong_indexnow/generate-key', {
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.key) {
+                    updateKeyDisplay(data.key);
+                    $.oc.flashMsg({ message: 'API Key generated and saved!', type: 'success' });
+                }
+                btn.prop('disabled', false).text('Generate & Save API Key');
+            })
+            .catch(function() {
+                btn.prop('disabled', false).text('Generate & Save API Key');
+            });
+        });
+    });
 </script>

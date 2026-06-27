@@ -18,8 +18,22 @@ fields:
         path: $/beysong/indexnow/models/settings/_field_generate_file.htm
     auto_submit:
         label: Auto submit sitemap to IndexNow
-        comment: Automatically notify IndexNow when sitemap is updated.
+        comment: Automatically notify IndexNow on a schedule.
         type: checkbox
+    frequency:
+        label: Submission Frequency
+        type: dropdown
+        options:
+            hourly: Hourly
+            daily: Daily
+            weekly: Weekly
+            monthly: Monthly
+        default: daily
+        cssClass: field-indent
+        trigger:
+            field: auto_submit
+            action: show
+            condition: checked
     submit_url:
         label: Sitemap URL
         comment: Leave empty to use default /sitemap.xml

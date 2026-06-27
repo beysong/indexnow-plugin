@@ -27,11 +27,14 @@ class IndexNowClient
             ];
         }
 
+        $siteUrl = rtrim($siteUrl, '/');
+        $host = preg_replace('#^https?://#', '', $siteUrl);
+
         $payload = [
-            'host'      => rtrim($this->normalizeUrl($siteUrl), '/'),
-            'key'       => $apikey,
-            'keyLocation' => rtrim($this->normalizeUrl($siteUrl), '/') . '/' . $apikey . '.txt',
-            'urlList'   => $urls,
+            'host'        => $host,
+            'key'         => $apikey,
+            'keyLocation'  => $siteUrl . '/' . $apikey . '.txt',
+            'urlList'     => array_map(fn($url) => rtrim($url, '/'), $urls),
         ];
 
         try {
@@ -55,13 +58,5 @@ class IndexNowClient
                 'message' => 'Failed to submit to IndexNow: ' . $e->getMessage(),
             ];
         }
-    }
-
-    /**
-     * Normalize URL - remove protocol and trailing slash
-     */
-    protected function normalizeUrl(string $url): string
-    {
-        return preg_replace('#^https?://#', '', rtrim($url, '/'));
     }
 }

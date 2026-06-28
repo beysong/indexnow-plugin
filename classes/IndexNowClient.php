@@ -8,7 +8,7 @@ class IndexNowClient
     /**
      * IndexNow API endpoint
      */
-    protected $apiUrl = 'https://api.indexnow.org/Submit';
+    protected $apiUrl = 'https://api.indexnow.org/IndexNow';
 
     /**
      * Submit URLs to IndexNow
@@ -33,24 +33,26 @@ class IndexNowClient
         $payload = [
             'host'        => $host,
             'key'         => $apikey,
-            'keyLocation'  => $siteUrl . '/' . $apikey . '.txt',
+            'keyLocation' => $siteUrl . '/' . $apikey . '.txt',
             'urlList'     => array_map(fn($url) => rtrim($url, '/'), $urls),
         ];
 
         try {
             $response = Http::post($this->apiUrl, $payload);
+            $status = $response->status();
+            $body = $response->body();
 
-            if ($response->status() == 200) {
+            if ($status == 202) {
                 return [
                     'success' => true,
                     'message' => 'Successfully submitted ' . count($urls) . ' URL(s) to IndexNow.',
                 ];
             }
 
-            $body = $response->json();
+            $json = $response->json();
             return [
                 'success' => false,
-                'message' => 'IndexNow returned status ' . $response->status() . ': ' . ($body['message'] ?? 'Unknown error'),
+                'message' => 'IndexNow returned status ' . $status . ': ' . ($json['message'] ?? $body),
             ];
         } catch (\Exception $e) {
             return [

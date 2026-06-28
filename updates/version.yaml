@@ -5,3 +5,7 @@
     - Add auto-submit with configurable frequency (hourly/daily/weekly/monthly)
     - Fix API key route pattern to support mixed-case keys
     - Fix IndexNow API payload (host vs keyLocation)
+1.0.4:
+    - Fix IndexNow API URL to /IndexNow (was /Submit)
+    - Fix success status code to 202 (was 200)
+    - Submit all URLs from sitemap XML instead of just the sitemap URL
